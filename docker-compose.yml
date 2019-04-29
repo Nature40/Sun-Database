@@ -1,0 +1,35 @@
+version: '3.7'
+
+networks:
+  monitoring: {}
+
+services:
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    ports:
+      - 8083:8083
+      - 8086:8086
+      - 8090:8090
+      - 25826:25826/udp
+    networks:
+      - monitoring
+    volumes:
+      - ./influxdb:/var/lib/influxdb
+    restart: always
+    env_file:
+      - influx.env
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring
+    volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana_provisioning/:/etc/grafana/provisioning/
+    restart: always
+    env_file:
+      - grafana.env
